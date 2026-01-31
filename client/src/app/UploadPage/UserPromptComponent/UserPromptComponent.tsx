@@ -6,23 +6,31 @@ const STORAGE_KEY = "art-quilt-user-prompt";
 
 type UserPromptComponentProps = {
   disabled?: boolean;
+  onPromptChange?: (hasPrompt: boolean) => void;
 };
 
-export const UserPromptComponent = ({ disabled = false }: UserPromptComponentProps) => {
+export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPromptComponentProps) => {
   const [prompt, setPrompt] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (stored) setPrompt(stored);
-  }, []);
+    if (stored) {
+      setPrompt(stored);
+      onPromptChange?.(!!stored.trim());
+    }
+  }, [onPromptChange]);
 
-  const persist = useCallback((value: string) => {
-    setPrompt(value);
-    if (typeof window === "undefined") return;
-    if (value) sessionStorage.setItem(STORAGE_KEY, value);
-    else sessionStorage.removeItem(STORAGE_KEY);
-  }, []);
+  const persist = useCallback(
+    (value: string) => {
+      setPrompt(value);
+      if (typeof window === "undefined") return;
+      if (value) sessionStorage.setItem(STORAGE_KEY, value);
+      else sessionStorage.removeItem(STORAGE_KEY);
+      onPromptChange?.(!!value.trim());
+    },
+    [onPromptChange]
+  );
 
   const clear = useCallback(() => persist(""), [persist]);
 

@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const STORAGE_KEY = "art-quilt-upload-image";
+export const UPLOAD_IMAGE_STORAGE_KEY = "art-quilt-upload-image";
+const STORAGE_KEY = UPLOAD_IMAGE_STORAGE_KEY;
 const MAX_DIMENSION = 1200;
 const JPEG_QUALITY = 0.75;
 
