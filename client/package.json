@@ -18,7 +18,8 @@
     "@google/generative-ai": "^0.24.1",
     "next": "^16.1.6",
     "openai": "^6.17.0",
-    "react": "^19.1.0"
+    "react": "^19.1.0",
+    "react-dropzone": "^14.4.0"
   },
   "devDependencies": {
     "@types/node": "25.1.0",
