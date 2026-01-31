@@ -276,7 +276,7 @@ export default function ResultPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 mt-0.5">•</span>
-                  {design.shapes[0]?.stitchData.edges} edges per piece ({design.shapeType})
+                  {design.shapes[0]?.stitchData?.edges ?? 4} edges per piece ({design.shapeType})
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 mt-0.5">•</span>
