@@ -50,7 +50,11 @@ function compressToDataUrl(file: File): Promise<string> {
   });
 }
 
-export const UploadComponent = () => {
+type UploadComponentProps = {
+  onImageChange?: (hasImage: boolean) => void;
+};
+
+export const UploadComponent = ({ onImageChange }: UploadComponentProps) => {
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [storageError, setStorageError] = useState<string | null>(null);
 
@@ -58,16 +62,19 @@ export const UploadComponent = () => {
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) setImageBase64(stored);
-  }, []);
+    onImageChange?.(!!stored);
+  }, [onImageChange]);
 
-  const persist = useCallback((base64: string | null) => {
-    if (typeof window === "undefined") return;
-    setStorageError(null);
-    try {
-      if (base64) localStorage.setItem(STORAGE_KEY, base64);
-      else localStorage.removeItem(STORAGE_KEY);
-      setImageBase64(base64);
-    } catch (e) {
+  const persist = useCallback(
+    (base64: string | null) => {
+      if (typeof window === "undefined") return;
+      setStorageError(null);
+      try {
+        if (base64) localStorage.setItem(STORAGE_KEY, base64);
+        else localStorage.removeItem(STORAGE_KEY);
+        setImageBase64(base64);
+        onImageChange?.(!!base64);
+      } catch (e) {
       if (e instanceof DOMException && e.name === "QuotaExceededError") {
         setStorageError(
           "Image too large to save locally. Try a smaller image.",
@@ -76,7 +83,9 @@ export const UploadComponent = () => {
         setStorageError("Could not save image.");
       }
     }
-  }, []);
+  },
+    [onImageChange],
+  );
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {

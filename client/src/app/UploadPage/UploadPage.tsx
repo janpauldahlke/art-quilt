@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * this page is for
  * 1. opening an exisitng project (mock, cause we dont have a dedicated user yet implemented)
@@ -8,16 +10,19 @@
  * we do not save chat history somewhere each is prompt is alone for now
  */
 
+import { useState } from "react";
 import { UploadComponent } from "./UploadComponent/UploadComponent";
 import { UserPromptComponent } from "./UserPromptComponent/UserPromptComponent";
 
 export default function UploadPage() {
+  const [hasImage, setHasImage] = useState(false);
+
   return (
     <section>
       <h1>This is Upload Page</h1>
-      <div className="flex flex-col gap-4">
-        <UploadComponent />
-        <UserPromptComponent />
+      <div className="flex flex-row flex-wrap items-start gap-6">
+        <UserPromptComponent disabled={hasImage} />
+        <UploadComponent onImageChange={setHasImage} />
       </div>
     </section>
   );
