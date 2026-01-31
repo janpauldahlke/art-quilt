@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import heroImage from "@/assets/landing/hero-image.png";
 import backgroundImage from "@/assets/landing/background.png";
 
@@ -8,6 +11,7 @@ import backgroundImage from "@/assets/landing/background.png";
  */
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header/Navigation */}
@@ -27,18 +31,18 @@ export default function LandingPage() {
                 How It Works
               </a>
               <button
-                disabled
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
-                aria-label="Start creating (coming soon)"
+                onClick={() => router.push("/upload")}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors"
+                aria-label="Start creating"
               >
                 Start Creating
               </button>
             </div>
             <div className="md:hidden">
               <button
-                disabled
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Start creating (coming soon)"
+                onClick={() => router.push("/upload")}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors"
+                aria-label="Start creating"
               >
                 Start
               </button>
@@ -84,14 +88,11 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  disabled
-                  className="px-8 py-4 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 relative group"
-                  aria-label="Start creating (coming soon)"
+                  onClick={() => router.push("/upload")}
+                  className="px-8 py-4 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors"
+                  aria-label="Start creating"
                 >
                   Start Creating
-                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-md">
-                    Soon
-                  </span>
                 </button>
                 <a
                   href="#how-it-works"

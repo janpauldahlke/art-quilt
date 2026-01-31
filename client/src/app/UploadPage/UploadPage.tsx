@@ -11,11 +11,13 @@
  */
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ImageSelectionLightbox } from "@/app/ImageSelectionPage/ImageSelectionLightbox";
 import { UploadComponent } from "./UploadComponent/UploadComponent";
 import { UPLOAD_IMAGE_STORAGE_KEY } from "./UploadComponent/UploadComponent";
 import { UserPromptComponent } from "./UserPromptComponent/UserPromptComponent";
+
+const STORAGE_KEY = "art-quilt-user-prompt";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -23,8 +25,33 @@ export default function UploadPage() {
   const [hasPrompt, setHasPrompt] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [uploadKey, setUploadKey] = useState(0);
+  const [userPrompt, setUserPrompt] = useState("");
+  const [imageProvider, setImageProvider] = useState<"openai" | "gemini">("openai");
 
-  const openLightbox = useCallback(() => setLightboxOpen(true), []);
+  const openLightbox = useCallback(() => {
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setUserPrompt(stored);
+      }
+      // Ensure we have the latest provider from sessionStorage
+      const storedProvider = sessionStorage.getItem("art-quilt-image-provider");
+      if (storedProvider === "openai" || storedProvider === "gemini") {
+        setImageProvider(storedProvider);
+      }
+    }
+    setLightboxOpen(true);
+  }, []);
+  
+  // Initialize provider from sessionStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProvider = sessionStorage.getItem("art-quilt-image-provider");
+      if (storedProvider === "openai" || storedProvider === "gemini") {
+        setImageProvider(storedProvider);
+      }
+    }
+  }, []);
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
 
   const handleLightboxSelect = useCallback(
@@ -46,7 +73,12 @@ export default function UploadPage() {
     <section>
       <h1>This is Upload Page</h1>
       <div className="flex flex-row flex-wrap items-start gap-6">
-        <UserPromptComponent disabled={hasImage} onPromptChange={setHasPrompt} />
+        <UserPromptComponent
+          disabled={hasImage}
+          onPromptChange={setHasPrompt}
+          provider={imageProvider}
+          onProviderChange={setImageProvider}
+        />
         <div>
           {!hasImage && (
             <button
@@ -95,6 +127,8 @@ export default function UploadPage() {
         isOpen={lightboxOpen}
         onClose={closeLightbox}
         onSelect={handleLightboxSelect}
+        prompt={userPrompt}
+        provider={imageProvider}
       />
     </section>
   );

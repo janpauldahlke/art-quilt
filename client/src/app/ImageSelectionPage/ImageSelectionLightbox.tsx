@@ -1,37 +1,26 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
-
-/** Mock "LLM 1" image as data URL (small SVG). */
-const MOCK_IMAGE_1 =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="%236366f1" width="320" height="240"/><text x="160" y="120" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="system-ui" font-size="24">LLM 1</text></svg>'
-  );
-
-/** Mock "LLM 2" image as data URL (small SVG). */
-const MOCK_IMAGE_2 =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="%2310b981" width="320" height="240"/><text x="160" y="120" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="system-ui" font-size="24">LLM 2</text></svg>'
-  );
-
-const MOCK_IMAGES = [
-  { id: "1", src: MOCK_IMAGE_1, label: "Option 1" },
-  { id: "2", src: MOCK_IMAGE_2, label: "Option 2" },
-] as const;
+import { useCallback, useEffect, useState } from "react";
 
 export type ImageSelectionLightboxProps = {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (base64: string) => void;
+  prompt?: string;
+  provider?: "openai" | "gemini";
 };
 
 export function ImageSelectionLightbox({
   isOpen,
   onClose,
   onSelect,
+  prompt,
+  provider = "openai",
 }: ImageSelectionLightboxProps) {
+  const [images, setImages] = useState<{ id: string; src: string; label: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const handleSelect = useCallback(
     (base64: string) => {
       onSelect(base64);
@@ -52,6 +41,56 @@ export function ImageSelectionLightbox({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  // Fetch images when lightbox opens and prompt is available
+  useEffect(() => {
+    if (!isOpen || !prompt || prompt.trim().length === 0) {
+      setImages([]);
+      setError(null);
+      return;
+    }
+
+    const fetchImages = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        console.log("Generating images with provider:", provider, "prompt:", prompt);
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt, provider }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate images");
+        }
+
+        const data = await response.json();
+        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+          setImages(
+            data.images.map((src: string, index: number) => ({
+              id: String(index + 1),
+              src,
+              label: `Option ${index + 1}`,
+            }))
+          );
+        } else {
+          throw new Error("No images were generated");
+        }
+      } catch (err) {
+        console.error("Error fetching images:", err);
+        setError(err instanceof Error ? err.message : "Failed to generate images");
+        setImages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [isOpen, prompt, provider]);
 
   if (!isOpen) return null;
 
@@ -82,6 +121,8 @@ export function ImageSelectionLightbox({
           maxWidth: 720,
           width: "100%",
           boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+          position: "relative",
+          zIndex: 1000,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -103,49 +144,99 @@ export function ImageSelectionLightbox({
             color: "#525252",
           }}
         >
-          Select one of the generated images to use as your design base.
+          {loading
+            ? "Generating images..."
+            : error
+              ? `Error: ${error}`
+              : "Select one of the generated images to use as your design base."}
         </p>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 16,
-            marginBottom: 24,
-          }}
-        >
-          {MOCK_IMAGES.map(({ id, src, label }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => handleSelect(src)}
-              style={{
-                padding: 0,
-                border: "2px solid #e5e5e5",
-                borderRadius: 8,
-                overflow: "hidden",
-                cursor: "pointer",
-                background: "none",
-                transition: "border-color 0.15s, box-shadow 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#6366f1";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(99,102,241,0.25)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#e5e5e5";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <img
-                src={src}
-                alt={label}
-                width={320}
-                height={240}
-                style={{ display: "block", width: "100%", height: "auto" }}
-              />
-            </button>
-          ))}
-        </div>
+        {loading && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "40px 20px",
+              color: "#737373",
+            }}
+          >
+            Generating images with AI...
+          </div>
+        )}
+        {error && (
+          <div
+            style={{
+              padding: "16px",
+              backgroundColor: "#fef2f2",
+              border: "1px solid #fecaca",
+              borderRadius: 8,
+              color: "#991b1b",
+              marginBottom: 24,
+            }}
+          >
+            {error}
+          </div>
+        )}
+        {!loading && !error && images.length > 0 && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: 16,
+              marginBottom: 24,
+            }}
+          >
+            {images.map(({ id, src, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleSelect(src);
+                }}
+                style={{
+                  padding: 0,
+                  border: "2px solid #e5e5e5",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  background: "none",
+                  transition: "border-color 0.15s, box-shadow 0.15s",
+                  position: "relative",
+                  zIndex: 1,
+                  pointerEvents: "auto",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#6366f1";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(99,102,241,0.25)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#e5e5e5";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+                aria-label={`Select ${label}`}
+              >
+                <img
+                  src={src}
+                  alt={label}
+                  width={320}
+                  height={240}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    height: "auto",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                  draggable={false}
+                />
+              </button>
+            ))}
+          </div>
+        )}
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             type="button"

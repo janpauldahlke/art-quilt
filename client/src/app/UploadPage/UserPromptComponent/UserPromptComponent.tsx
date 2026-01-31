@@ -7,10 +7,39 @@ const STORAGE_KEY = "art-quilt-user-prompt";
 type UserPromptComponentProps = {
   disabled?: boolean;
   onPromptChange?: (hasPrompt: boolean) => void;
+  provider?: "openai" | "gemini";
+  onProviderChange?: (provider: "openai" | "gemini") => void;
 };
 
-export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPromptComponentProps) => {
+const PROVIDER_STORAGE_KEY = "art-quilt-image-provider";
+
+export const UserPromptComponent = ({
+  disabled = false,
+  onPromptChange,
+  provider = "openai",
+  onProviderChange,
+}: UserPromptComponentProps) => {
   const [prompt, setPrompt] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState<"openai" | "gemini">(provider);
+
+  // Sync with prop changes
+  useEffect(() => {
+    setSelectedProvider(provider);
+  }, [provider]);
+
+  // Load from sessionStorage on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = sessionStorage.getItem(PROVIDER_STORAGE_KEY);
+    if (stored === "openai" || stored === "gemini") {
+      setSelectedProvider(stored);
+      onProviderChange?.(stored);
+    } else {
+      // If no stored value, use the prop and save it
+      sessionStorage.setItem(PROVIDER_STORAGE_KEY, provider);
+      onProviderChange?.(provider);
+    }
+  }, [onProviderChange, provider]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -34,8 +63,70 @@ export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPr
 
   const clear = useCallback(() => persist(""), [persist]);
 
+  const handleProviderChange = useCallback(
+    (newProvider: "openai" | "gemini") => {
+      setSelectedProvider(newProvider);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(PROVIDER_STORAGE_KEY, newProvider);
+      }
+      onProviderChange?.(newProvider);
+    },
+    [onProviderChange]
+  );
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: "40vw" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <label
+          style={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: disabled ? "#a3a3a3" : "#525252",
+          }}
+        >
+          Image Generation Provider
+        </label>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => handleProviderChange("openai")}
+            disabled={disabled}
+            style={{
+              padding: "6px 12px",
+              fontSize: 12,
+              fontWeight: selectedProvider === "openai" ? 600 : 400,
+              color: selectedProvider === "openai" ? "#fff" : "#525252",
+              backgroundColor:
+                selectedProvider === "openai" ? "#6366f1" : disabled ? "#f5f5f5" : "#fafafa",
+              border: `1px solid ${selectedProvider === "openai" ? "#6366f1" : "#e5e5e5"}`,
+              borderRadius: 6,
+              cursor: disabled ? "not-allowed" : "pointer",
+              transition: "all 0.15s",
+            }}
+          >
+            OpenAI (DALL-E)
+          </button>
+          <button
+            type="button"
+            onClick={() => handleProviderChange("gemini")}
+            disabled={disabled}
+            style={{
+              padding: "6px 12px",
+              fontSize: 12,
+              fontWeight: selectedProvider === "gemini" ? 600 : 400,
+              color: selectedProvider === "gemini" ? "#fff" : "#525252",
+              backgroundColor:
+                selectedProvider === "gemini" ? "#10b981" : disabled ? "#f5f5f5" : "#fafafa",
+              border: `1px solid ${selectedProvider === "gemini" ? "#10b981" : "#e5e5e5"}`,
+              borderRadius: 6,
+              cursor: disabled ? "not-allowed" : "pointer",
+              transition: "all 0.15s",
+            }}
+          >
+            Google (Gemini)
+          </button>
+        </div>
+      </div>
       <label
         htmlFor="user-prompt"
         style={{
