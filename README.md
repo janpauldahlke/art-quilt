@@ -21,3 +21,7 @@ Participants:
 - http://localhost:3000/upload
 - http://localhost:3000/imageSelection
 - http://localhost:3000/designcreation
+
+#### issues
+
+- i had to provide my own API key for gemini, could not claim anyhting, so i gonna disable this key on 02.02.2026 ()
