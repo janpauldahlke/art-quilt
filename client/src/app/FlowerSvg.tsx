@@ -55,7 +55,8 @@ export default function FlowerSvg({ svgContent }: { svgContent: string }) {
             <strong>Element:</strong> {clickInfo.tagName}
           </p>
           <p>
-            <strong>Pixel (x, y):</strong> ({clickInfo.pixelX}, {clickInfo.pixelY})
+            <strong>Pixel (x, y):</strong> ({clickInfo.pixelX},{" "}
+            {clickInfo.pixelY})
           </p>
           {clickInfo.fill && (
             <p>

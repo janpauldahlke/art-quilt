@@ -1,11 +1,7 @@
 import { readFileSync } from "fs";
 import path from "path";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSystemPrompt } from "@/app/svgService/svgPrompt";
-
-const openai = new OpenAI({
-  apiKey: process.env.GOOGLE_API_KEY,
-});
 
 const IMAGE_PATH = path.join(process.cwd(), "src", "assets", "input.JPG");
 
@@ -22,7 +18,7 @@ export async function POST() {
   const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "GOOGLE API KEY is not set in environment" },
+      { error: "GOOGLE_API_KEY is not set in environment" },
       { status: 500 },
     );
   }
@@ -41,52 +37,38 @@ export async function POST() {
   }
 
   const systemPrompt = getSystemPrompt();
+  const userPrompt =
+    "Convert this image to a quilting/stitching pattern SVG following the instructions. Use a small grid (e.g. WIDTH=20 or 30) so you can output the full SVG XML in this response—each pixel as its own <rect>. Reply with the complete <svg>...</svg> code.";
 
-  const completion = await openai.chat.completions.create({
-    model: "gemini-3",
-    reasoning_effort: "high",
-    messages: [
-      { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: "Convert this image to a quilting/stitching pattern SVG following the instructions. Use a small grid (e.g. WIDTH=20 or 30) so you can output the full SVG XML in this response—each pixel as its own <rect>. Reply with the complete <svg>...</svg> code.",
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:image/jpeg;base64,${imageBase64}`,
-            },
-          },
-        ],
-      },
-    ],
-    max_tokens: 4096,
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3-pro-preview",
+    systemInstruction: systemPrompt,
+    generationConfig: { maxOutputTokens: 4096 },
   });
 
-  const rawContent = completion.choices[0]?.message?.content ?? "";
-  console.log("-->", rawContent);
+  const result = await model.generateContent([
+    { text: userPrompt },
+    {
+      inlineData: {
+        mimeType: "image/jpeg",
+        data: imageBase64,
+      },
+    },
+  ]);
+
+  const rawContent = result.response.text();
   const svg = extractSvgFromResponse(rawContent);
 
   // Log the full model response as JSON (server console)
+  const responsePayload = {
+    candidates: result.response.candidates,
+    usageMetadata: result.response.usageMetadata,
+    rawContent,
+  };
   console.log(
-    "OpenAI model response (JSON):",
-    JSON.stringify(
-      {
-        id: completion.id,
-        model: completion.model,
-        choices: completion.choices?.map((c) => ({
-          index: c.index,
-          message: c.message,
-          finish_reason: c.finish_reason,
-        })),
-        usage: completion.usage,
-      },
-      null,
-      2,
-    ),
+    "Gemini model response (JSON):",
+    JSON.stringify(responsePayload, null, 2),
   );
 
   return Response.json({ svg, raw: rawContent });
