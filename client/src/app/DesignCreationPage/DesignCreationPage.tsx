@@ -7,10 +7,13 @@
  * * prove some interaction and svg and couple it to the formGroup
  */
 
+import { PreviewBox } from "./Preview/previewBox";
+
 export default function DesignCreationPage() {
   return (
     <section>
       <h1>This is Design Creation Page</h1>
+      <PreviewBox />
     </section>
   );
 }
