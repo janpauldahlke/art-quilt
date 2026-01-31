@@ -10,6 +10,7 @@
  * we do not save chat history somewhere each is prompt is alone for now
  */
 
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { ImageSelectionLightbox } from "@/app/ImageSelectionPage/ImageSelectionLightbox";
 import { UploadComponent } from "./UploadComponent/UploadComponent";
@@ -17,6 +18,7 @@ import { UPLOAD_IMAGE_STORAGE_KEY } from "./UploadComponent/UploadComponent";
 import { UserPromptComponent } from "./UserPromptComponent/UserPromptComponent";
 
 export default function UploadPage() {
+  const router = useRouter();
   const [hasImage, setHasImage] = useState(false);
   const [hasPrompt, setHasPrompt] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -69,6 +71,24 @@ export default function UploadPage() {
             key={uploadKey}
             onImageChange={setHasImage}
           />
+          {hasImage && (
+            <button
+              type="button"
+              onClick={() => router.push("/designcreation")}
+              style={{
+                marginTop: 16,
+                padding: "10px 20px",
+                fontSize: 14,
+                color: "#fff",
+                backgroundColor: "#10b981",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+              }}
+            >
+              Next step
+            </button>
+          )}
         </div>
       </div>
       <ImageSelectionLightbox
