@@ -38,40 +38,28 @@ export const ResultDisplayComponent = ({
     URL.revokeObjectURL(url);
   }, [design]);
 
-  // Create a data URL from SVG for display
   const svgDataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
-          Quilt Pattern
-        </h2>
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 flex flex-col gap-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="font-semibold text-gray-900">Quilt Pattern</h2>
+            <p className="text-xs text-gray-500">Generated design</p>
+          </div>
+        </div>
         {onClear && (
           <button
             type="button"
             onClick={onClear}
-            style={{
-              padding: "4px 10px",
-              fontSize: 12,
-              color: "#737373",
-              backgroundColor: "transparent",
-              border: "1px solid #e5e5e5",
-              borderRadius: 4,
-              cursor: "pointer",
-            }}
+            className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
           >
             Clear
           </button>
@@ -79,171 +67,73 @@ export const ResultDisplayComponent = ({
       </div>
 
       {/* SVG Preview */}
-      <div
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: 8,
-          border: "1px solid #e5e5e5",
-          padding: 8,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+      <div className="bg-gray-50 rounded-xl p-4 flex justify-center border border-gray-100">
         <img
           src={svgDataUrl}
           alt="Quilt pattern preview"
-          style={{
-            maxWidth: "100%",
-            height: "auto",
-            maxHeight: 400,
-            imageRendering: "pixelated",
-          }}
+          className="max-w-full h-auto max-h-[400px]"
+          style={{ imageRendering: "pixelated" }}
         />
       </div>
 
       {/* Quick Stats */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 8,
-        }}
-      >
-        <div
-          style={{
-            padding: 12,
-            backgroundColor: "#f5f5f5",
-            borderRadius: 6,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#6366f1" }}>
-            {design.shapes.length}
-          </div>
-          <div style={{ fontSize: 11, color: "#737373" }}>Pieces</div>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-purple-50 rounded-xl p-3 text-center">
+          <div className="text-xl font-bold text-purple-600">{design.shapes.length}</div>
+          <div className="text-xs text-purple-700">Pieces</div>
         </div>
-        <div
-          style={{
-            padding: 12,
-            backgroundColor: "#f5f5f5",
-            borderRadius: 6,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#6366f1" }}>
-            {design.colorPalette.length}
-          </div>
-          <div style={{ fontSize: 11, color: "#737373" }}>Colors</div>
+        <div className="bg-blue-50 rounded-xl p-3 text-center">
+          <div className="text-xl font-bold text-blue-600">{design.colorPalette.length}</div>
+          <div className="text-xs text-blue-700">Colors</div>
         </div>
-        <div
-          style={{
-            padding: 12,
-            backgroundColor: "#f5f5f5",
-            borderRadius: 6,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: 20, fontWeight: 700, color: "#6366f1" }}>
-            {design.gridWidth}×{design.gridHeight}
-          </div>
-          <div style={{ fontSize: 11, color: "#737373" }}>Grid</div>
+        <div className="bg-green-50 rounded-xl p-3 text-center">
+          <div className="text-xl font-bold text-green-600">{design.gridWidth}×{design.gridHeight}</div>
+          <div className="text-xs text-green-700">Grid</div>
         </div>
       </div>
 
       {/* Color Palette */}
       <div>
-        <div
-          style={{
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#525252",
-            marginBottom: 8,
-          }}
-        >
-          Color Palette
-        </div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <p className="text-sm font-medium text-gray-700 mb-2">Color Palette</p>
+        <div className="flex gap-2 flex-wrap">
           {design.colorPalette.map((color, i) => (
             <div
               key={i}
               title={color}
-              style={{
-                width: 32,
-                height: 32,
-                backgroundColor: color,
-                borderRadius: 4,
-                border: "1px solid rgba(0,0,0,0.1)",
-                cursor: "pointer",
-              }}
+              className="w-8 h-8 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:scale-110 transition-transform"
+              style={{ backgroundColor: color }}
             />
           ))}
         </div>
       </div>
 
-      {/* Fabric Dimensions */}
-      <div
-        style={{
-          padding: 12,
-          backgroundColor: "#fef3c7",
-          borderRadius: 8,
-          border: "1px solid #fcd34d",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#92400e",
-            marginBottom: 4,
-          }}
-        >
-          Real-World Size
-        </div>
-        <div style={{ fontSize: 14, color: "#78350f" }}>
-          {Math.round(design.fabricData.totalWidthMm / 10)} ×{" "}
-          {Math.round(design.fabricData.totalHeightMm / 10)} cm
-          <span style={{ fontSize: 12, color: "#92400e", marginLeft: 8 }}>
-            ({Math.round(design.fabricData.totalWidthMm / 25.4)} ×{" "}
-            {Math.round(design.fabricData.totalHeightMm / 25.4)} inches)
+      {/* Fabric Size */}
+      <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+        <p className="text-sm font-medium text-amber-800 mb-1">Finished Size</p>
+        <p className="text-amber-900">
+          <span className="font-bold">
+            {Math.round(design.fabricData.totalWidthMm / 10)} × {Math.round(design.fabricData.totalHeightMm / 10)} cm
           </span>
-        </div>
-        <div style={{ fontSize: 12, color: "#92400e", marginTop: 4 }}>
-          Cell size: {design.fabricData.cellSizeMm}mm | Seam:{" "}
-          {design.fabricData.seamAllowanceMm}mm
-        </div>
+          <span className="text-amber-700 text-sm ml-2">
+            ({Math.round(design.fabricData.totalWidthMm / 25.4)} × {Math.round(design.fabricData.totalHeightMm / 25.4)} in)
+          </span>
+        </p>
       </div>
 
       {/* Metadata Toggle */}
       <button
         type="button"
         onClick={() => setShowMetadata(!showMetadata)}
-        style={{
-          padding: "8px 12px",
-          fontSize: 12,
-          color: "#525252",
-          backgroundColor: "#f5f5f5",
-          border: "1px solid #e5e5e5",
-          borderRadius: 6,
-          cursor: "pointer",
-          textAlign: "left",
-        }}
+        className="text-left text-sm text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-2"
       >
-        {showMetadata ? "▼" : "▶"} Stitching Data (JSON)
+        <svg className={`w-4 h-4 transition-transform ${showMetadata ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+        Stitching Data (JSON)
       </button>
 
       {showMetadata && (
-        <pre
-          style={{
-            padding: 12,
-            backgroundColor: "#1e1e1e",
-            color: "#d4d4d4",
-            borderRadius: 8,
-            fontSize: 11,
-            overflow: "auto",
-            maxHeight: 200,
-            margin: 0,
-          }}
-        >
+        <pre className="p-4 bg-gray-900 text-gray-100 rounded-xl text-xs overflow-auto max-h-48">
           {JSON.stringify(
             {
               fabricData: design.fabricData,
@@ -258,40 +148,26 @@ export const ResultDisplayComponent = ({
       )}
 
       {/* Download Buttons */}
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
           onClick={handleDownloadSvg}
-          style={{
-            flex: 1,
-            padding: "10px 16px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#fff",
-            backgroundColor: "#6366f1",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-          }}
+          className="py-3 px-4 bg-purple-600 text-white font-medium rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
         >
-          Download SVG
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          SVG
         </button>
         <button
           type="button"
           onClick={handleDownloadJson}
-          style={{
-            flex: 1,
-            padding: "10px 16px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#525252",
-            backgroundColor: "#fff",
-            border: "1px solid #e5e5e5",
-            borderRadius: 6,
-            cursor: "pointer",
-          }}
+          className="py-3 px-4 bg-white text-gray-700 font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
         >
-          Download Data
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Data
         </button>
       </div>
     </div>

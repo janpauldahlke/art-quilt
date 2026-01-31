@@ -76,16 +76,14 @@ export const UploadComponent = ({ onImageChange }: UploadComponentProps) => {
         setImageBase64(base64);
         onImageChange?.(!!base64);
       } catch (e) {
-      if (e instanceof DOMException && e.name === "QuotaExceededError") {
-        setStorageError(
-          "Image too large to save locally. Try a smaller image.",
-        );
-      } else {
-        setStorageError("Could not save image.");
+        if (e instanceof DOMException && e.name === "QuotaExceededError") {
+          setStorageError("Image too large to save locally. Try a smaller image.");
+        } else {
+          setStorageError("Could not save image.");
+        }
       }
-    }
-  },
-    [onImageChange],
+    },
+    [onImageChange]
   );
 
   const onDrop = useCallback(
@@ -97,12 +95,10 @@ export const UploadComponent = ({ onImageChange }: UploadComponentProps) => {
         const base64 = await compressToDataUrl(file);
         persist(base64);
       } catch (e) {
-        setStorageError(
-          e instanceof Error ? e.message : "Failed to process image.",
-        );
+        setStorageError(e instanceof Error ? e.message : "Failed to process image.");
       }
     },
-    [persist],
+    [persist]
   );
 
   const remove = useCallback(() => {
@@ -117,74 +113,73 @@ export const UploadComponent = ({ onImageChange }: UploadComponentProps) => {
     disabled: !!imageBase64,
   });
 
-  const dropzoneStyle: React.CSSProperties = {
-    border: "2px dashed #d4d4d4",
-    borderRadius: 8,
-    padding: 32,
-    textAlign: "center",
-    cursor: "pointer",
-    outline: "none",
-    ...(isDragActive && { borderColor: "#a3a3a3", backgroundColor: "#f5f5f5" }),
-  };
-
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {storageError && (
-        <p
-          style={{ color: "#b91c1c", fontSize: 14, marginBottom: 8 }}
-          role="alert"
-        >
-          {storageError}
-        </p>
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm" role="alert">
+            {storageError}
+          </p>
+        </div>
       )}
+
       {!imageBase64 ? (
         <>
-          <div {...getRootProps()} style={dropzoneStyle}>
-            <input {...getInputProps()} />
-            <span
-              style={{
-                display: "block",
-                fontSize: "2rem",
-                color: "#a3a3a3",
-                marginBottom: 8,
-              }}
-              aria-hidden
-            >
-              ↓
-            </span>
-            <p style={{ color: "#525252", fontSize: 14 }}>
-              {isDragActive
-                ? "Drop image here"
-                : "Drop one JPG or PNG here or click to choose"}
-            </p>
-          </div>
-          <p
-            style={{
-              marginTop: 8,
-              padding: "8px 12px",
-              fontSize: 12,
-              color: "#737373",
-              backgroundColor: "#fafafa",
-              border: "1px solid #e5e5e5",
-              borderRadius: 4,
-            }}
+          <div
+            {...getRootProps()}
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+              isDragActive
+                ? "border-purple-400 bg-purple-50"
+                : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+            }`}
           >
-            JPG, JPEG or PNG · Max {MAX_DIMENSION}px per side · Large images are
-            resized and compressed for local storage
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-gray-700 font-medium">
+                  {isDragActive ? "Drop your image here" : "Drag & drop your image"}
+                </p>
+                <p className="text-gray-500 text-sm mt-1">or click to browse</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center">
+            JPG, JPEG or PNG • Max {MAX_DIMENSION}px • Large images are resized
           </p>
         </>
       ) : (
-        <div>
-          <div>
+        <div className="relative">
+          {/* Image Preview */}
+          <div className="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
             <img
               src={imageBase64}
               alt="Upload preview"
-              width={160}
-              height={120}
+              className="w-full h-auto max-h-80 object-contain"
             />
+            {/* Success badge */}
+            <div className="absolute top-3 left-3 px-3 py-1.5 bg-green-500 text-white text-xs font-semibold rounded-full shadow-lg flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Image Ready
+            </div>
           </div>
-          <button type="button" onClick={remove}>
-            Remove
+          
+          {/* Remove Button - Clear and prominent */}
+          <button
+            type="button"
+            onClick={remove}
+            className="mt-4 w-full py-3 px-4 bg-red-50 text-red-600 font-medium rounded-xl border border-red-200 hover:bg-red-100 hover:border-red-300 transition-all flex items-center justify-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Remove Image & Start Over
           </button>
         </div>
       )}

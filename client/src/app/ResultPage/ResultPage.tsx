@@ -42,8 +42,6 @@ export default function ResultPage() {
 
   const handleDownloadCuttingGuide = useCallback(() => {
     if (!design) return;
-
-    // Generate a cutting guide with all piece information
     const guide = generateCuttingGuide(design);
     const blob = new Blob([guide], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -69,38 +67,35 @@ export default function ResultPage() {
 
   if (!design || !svg) {
     return (
-      <section>
-        <h1>Result Page</h1>
-        <div
-          style={{
-            padding: 40,
-            textAlign: "center",
-            backgroundColor: "#fafafa",
-            borderRadius: 12,
-            border: "1px dashed #d4d4d4",
-          }}
-        >
-          <p style={{ color: "#525252", fontSize: 16, marginBottom: 16 }}>
-            No design found. Please create a design first.
-          </p>
-          <button
-            type="button"
-            onClick={() => router.push("/designcreation")}
-            style={{
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              color: "#fff",
-              backgroundColor: "#6366f1",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-            }}
-          >
-            Go to Design Creation
-          </button>
-        </div>
-      </section>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+                ArtQuilt
+              </a>
+            </div>
+          </nav>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center max-w-lg mx-auto">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">No Design Found</h2>
+            <p className="text-gray-500 mb-6">Please create a design first</p>
+            <button
+              type="button"
+              onClick={() => router.push("/designcreation")}
+              className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors"
+            >
+              Go to Design Creation
+            </button>
+          </div>
+        </main>
+      </div>
     );
   }
 
@@ -113,306 +108,201 @@ export default function ResultPage() {
   }
 
   return (
-    <section>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 24,
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Quilt Pattern Result</h1>
-        <button
-          type="button"
-          onClick={() => router.push("/designcreation")}
-          style={{
-            padding: "8px 16px",
-            fontSize: 13,
-            color: "#525252",
-            backgroundColor: "#f5f5f5",
-            border: "1px solid #e5e5e5",
-            borderRadius: 6,
-            cursor: "pointer",
-          }}
-        >
-          ← Back to Design
-        </button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+              ArtQuilt
+            </a>
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:inline text-sm text-gray-500">Step 3 of 3</span>
+              <div className="flex gap-1">
+                <div className="w-8 h-1.5 rounded-full bg-purple-600" />
+                <div className="w-8 h-1.5 rounded-full bg-purple-600" />
+                <div className="w-8 h-1.5 rounded-full bg-purple-600" />
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 400px",
-          gap: 32,
-          alignItems: "start",
-        }}
-      >
-        {/* Main Preview */}
-        <div>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: 12,
-              border: "1px solid #e5e5e5",
-              padding: 16,
-              marginBottom: 24,
-            }}
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Your Quilt Pattern</h1>
+            <p className="text-gray-600 mt-1">Download your files and start creating</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => router.push("/designcreation")}
+            className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
           >
-            <img
-              src={svgDataUrl}
-              alt="Quilt pattern"
-              style={{
-                width: "100%",
-                height: "auto",
-                imageRendering: "pixelated",
-              }}
-            />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Preview */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <div className="bg-gray-50 rounded-xl p-6 flex justify-center border border-gray-100">
+                <img
+                  src={svgDataUrl}
+                  alt="Quilt pattern"
+                  className="max-w-full h-auto"
+                  style={{ imageRendering: "pixelated" }}
+                />
+              </div>
+            </div>
+
+            {/* Download Actions */}
+            <div className="grid sm:grid-cols-3 gap-4">
+              <button
+                type="button"
+                onClick={handleDownloadSvg}
+                className="py-4 px-6 bg-purple-600 text-white font-semibold rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl transition-all flex items-center justify-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                SVG Pattern
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadCuttingGuide}
+                className="py-4 px-6 bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:bg-green-700 hover:shadow-xl transition-all flex items-center justify-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Cutting Guide
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadJson}
+                className="py-4 px-6 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                JSON Data
+              </button>
+            </div>
           </div>
 
-          {/* Download Actions */}
-          <div style={{ display: "flex", gap: 12 }}>
-            <button
-              type="button"
-              onClick={handleDownloadSvg}
-              style={{
-                flex: 1,
-                padding: "14px 20px",
-                fontSize: 14,
-                fontWeight: 600,
-                color: "#fff",
-                backgroundColor: "#6366f1",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-              }}
-            >
-              Download SVG Pattern
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadCuttingGuide}
-              style={{
-                flex: 1,
-                padding: "14px 20px",
-                fontSize: 14,
-                fontWeight: 600,
-                color: "#fff",
-                backgroundColor: "#10b981",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-              }}
-            >
-              Download Cutting Guide
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadJson}
-              style={{
-                padding: "14px 20px",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#525252",
-                backgroundColor: "#fff",
-                border: "1px solid #e5e5e5",
-                borderRadius: 8,
-                cursor: "pointer",
-              }}
-            >
-              JSON Data
-            </button>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Summary Card */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Pattern Summary</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Total Pieces</span>
+                  <span className="font-semibold text-gray-900">{design.shapes.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Grid Size</span>
+                  <span className="font-semibold text-gray-900">{design.gridWidth} × {design.gridHeight}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Pattern Type</span>
+                  <span className="font-semibold text-gray-900 capitalize">{design.shapeType}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Colors Used</span>
+                  <span className="font-semibold text-gray-900">{design.colorPalette.length}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Fabric Requirements */}
+            <div className="bg-green-50 rounded-2xl border border-green-200 p-6">
+              <h3 className="font-semibold text-green-800 mb-4">Fabric Requirements</h3>
+              <div className="space-y-3 text-green-900">
+                <div className="flex justify-between">
+                  <span className="text-green-700">Finished Size</span>
+                  <span className="font-semibold">
+                    {Math.round(design.fabricData.totalWidthMm / 10)} × {Math.round(design.fabricData.totalHeightMm / 10)} cm
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Piece Size</span>
+                  <span className="font-semibold">
+                    {design.fabricData.cellSizeMm}mm ({(design.fabricData.cellSizeMm / 25.4).toFixed(1)}")
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Seam Allowance</span>
+                  <span className="font-semibold">
+                    {design.fabricData.seamAllowanceMm}mm
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Color Breakdown */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Pieces by Color</h3>
+              <div className="space-y-2">
+                {Object.entries(colorCounts)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([color, count]) => (
+                    <div key={color} className="flex items-center gap-3">
+                      <div
+                        className="w-6 h-6 rounded-lg border border-gray-200 shadow-sm flex-shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="flex-1 text-xs font-mono text-gray-500 truncate">{color}</span>
+                      <span className="font-semibold text-gray-900">{count}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Stitching Notes */}
+            <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6">
+              <h3 className="font-semibold text-amber-800 mb-3">Stitching Notes</h3>
+              <ul className="space-y-2 text-sm text-amber-900">
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-600 mt-0.5">•</span>
+                  Each piece includes {design.fabricData.seamAllowanceMm}mm seam allowance
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-600 mt-0.5">•</span>
+                  {design.shapes[0]?.stitchData.edges} edges per piece ({design.shapeType})
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-600 mt-0.5">•</span>
+                  Recommended stitch length: 2.5mm
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-600 mt-0.5">•</span>
+                  Press seams open or to the dark side
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Sidebar with Details */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          {/* Summary Card */}
-          <div
-            style={{
-              padding: 20,
-              backgroundColor: "#fafafa",
-              borderRadius: 12,
-              border: "1px solid #e5e5e5",
-            }}
+        {/* Start Over */}
+        <div className="mt-12 text-center">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="text-gray-500 hover:text-gray-700 transition-colors text-sm"
           >
-            <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600 }}>
-              Pattern Summary
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#737373" }}>Total Pieces</span>
-                <span style={{ fontWeight: 600 }}>{design.shapes.length}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#737373" }}>Grid Size</span>
-                <span style={{ fontWeight: 600 }}>
-                  {design.gridWidth} × {design.gridHeight}
-                </span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#737373" }}>Pattern Type</span>
-                <span
-                  style={{
-                    fontWeight: 600,
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {design.shapeType}
-                </span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#737373" }}>Colors Used</span>
-                <span style={{ fontWeight: 600 }}>
-                  {design.colorPalette.length}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Fabric Requirements */}
-          <div
-            style={{
-              padding: 20,
-              backgroundColor: "#ecfdf5",
-              borderRadius: 12,
-              border: "1px solid #a7f3d0",
-            }}
-          >
-            <h3
-              style={{
-                margin: "0 0 16px",
-                fontSize: 16,
-                fontWeight: 600,
-                color: "#065f46",
-              }}
-            >
-              Fabric Requirements
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#047857" }}>Finished Size</span>
-                <span style={{ fontWeight: 600, color: "#065f46" }}>
-                  {Math.round(design.fabricData.totalWidthMm / 10)} ×{" "}
-                  {Math.round(design.fabricData.totalHeightMm / 10)} cm
-                </span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#047857" }}>Piece Size</span>
-                <span style={{ fontWeight: 600, color: "#065f46" }}>
-                  {design.fabricData.cellSizeMm} mm (
-                  {(design.fabricData.cellSizeMm / 25.4).toFixed(1)}")
-                </span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#047857" }}>Seam Allowance</span>
-                <span style={{ fontWeight: 600, color: "#065f46" }}>
-                  {design.fabricData.seamAllowanceMm} mm (
-                  {(design.fabricData.seamAllowanceMm / 25.4).toFixed(2)}")
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Color Breakdown */}
-          <div
-            style={{
-              padding: 20,
-              backgroundColor: "#fafafa",
-              borderRadius: 12,
-              border: "1px solid #e5e5e5",
-            }}
-          >
-            <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600 }}>
-              Pieces by Color
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {Object.entries(colorCounts)
-                .sort((a, b) => b[1] - a[1])
-                .map(([color, count]) => (
-                  <div
-                    key={color}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 24,
-                        height: 24,
-                        backgroundColor: color,
-                        borderRadius: 4,
-                        border: "1px solid rgba(0,0,0,0.1)",
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span
-                      style={{
-                        flex: 1,
-                        fontSize: 12,
-                        fontFamily: "monospace",
-                        color: "#737373",
-                      }}
-                    >
-                      {color}
-                    </span>
-                    <span style={{ fontWeight: 600, fontSize: 14 }}>
-                      {count}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-
-          {/* Stitching Info */}
-          <div
-            style={{
-              padding: 20,
-              backgroundColor: "#fef3c7",
-              borderRadius: 12,
-              border: "1px solid #fcd34d",
-            }}
-          >
-            <h3
-              style={{
-                margin: "0 0 12px",
-                fontSize: 16,
-                fontWeight: 600,
-                color: "#92400e",
-              }}
-            >
-              Stitching Notes
-            </h3>
-            <ul
-              style={{
-                margin: 0,
-                paddingLeft: 18,
-                fontSize: 13,
-                color: "#78350f",
-                lineHeight: 1.6,
-              }}
-            >
-              <li>
-                Each piece includes{" "}
-                {design.fabricData.seamAllowanceMm}mm seam allowance
-              </li>
-              <li>
-                {design.shapes[0]?.stitchData.edges} edges per piece (
-                {design.shapeType})
-              </li>
-              <li>
-                Recommended stitch length: 2.5mm for cotton
-              </li>
-              <li>
-                Press seams open or to the dark side
-              </li>
-            </ul>
-          </div>
+            ← Start a new design
+          </button>
         </div>
-      </div>
-    </section>
+      </main>
+    </div>
   );
 }
 
@@ -453,7 +343,6 @@ function generateCuttingGuide(design: QuiltDesign): string {
   lines.push(`                        ${(cutSize / 25.4).toFixed(2)}" × ${(cutSize / 25.4).toFixed(2)}"`);
   lines.push("");
 
-  // Count by color
   const colorCounts: Record<string, number> = {};
   for (const shape of design.shapes) {
     colorCounts[shape.color] = (colorCounts[shape.color] || 0) + 1;
@@ -467,7 +356,7 @@ function generateCuttingGuide(design: QuiltDesign): string {
       const areaPerPiece = cutSize * cutSize;
       const totalArea = areaPerPiece * count;
       const totalAreaSqIn = totalArea / (25.4 * 25.4);
-      const fabricYards = totalAreaSqIn / (36 * 44); // assuming 44" wide fabric
+      const fabricYards = totalAreaSqIn / (36 * 44);
 
       lines.push(
         `Color ${i + 1}: ${color.padEnd(8)} | ${String(count).padStart(4)} pieces | ~${fabricYards.toFixed(2)} yards`

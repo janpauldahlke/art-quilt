@@ -127,7 +127,6 @@ export function ImageSelectionLightbox({
 
   if (!isOpen) return null;
 
-  const allDone = images.every((img) => !img.loading);
   const hasAnyImage = images.some((img) => img.src);
 
   return (
@@ -135,205 +134,113 @@ export function ImageSelectionLightbox({
       role="dialog"
       aria-modal="true"
       aria-labelledby="lightbox-title"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 50,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(0,0,0,0.6)",
-        padding: 24,
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: 12,
-          padding: 24,
-          maxWidth: 800,
-          width: "100%",
-          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
-        }}
+        className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2
-          id="lightbox-title"
-          style={{
-            margin: "0 0 16px",
-            fontSize: 18,
-            fontWeight: 600,
-            color: "#171717",
-          }}
-        >
-          {generating && !hasAnyImage
-            ? "Generating images..."
-            : "Choose an image"}
-        </h2>
-        <p
-          style={{
-            margin: "0 0 20px",
-            fontSize: 14,
-            color: "#525252",
-          }}
-        >
-          {generating && !hasAnyImage
-            ? "Please wait while we generate quilt-suitable designs from both AI models."
-            : "Select one of the generated images to use as your design base. Each is from a different AI model."}
-        </p>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 16,
-            marginBottom: 24,
-          }}
-        >
-          {images.map(({ id, src, label, model, loading, error }) => (
-            <div key={id} style={{ display: "flex", flexDirection: "column" }}>
-              {/* Model Label */}
-              <div
-                style={{
-                  marginBottom: 8,
-                  padding: "6px 12px",
-                  backgroundColor:
-                    id === "openai" ? "#10b981" : "#6366f1",
-                  borderRadius: "6px 6px 0 0",
-                  textAlign: "center",
-                }}
+        <div className="p-6 lg:p-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2
+                id="lightbox-title"
+                className="text-xl font-bold text-gray-900"
               >
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "#fff",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {model || label}
-                </span>
-              </div>
-
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 280,
-                    backgroundColor: "#f5f5f5",
-                    borderRadius: "0 0 8px 8px",
-                    border: "2px solid #e5e5e5",
-                    borderTop: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      border: "3px solid #e5e5e5",
-                      borderTopColor:
-                        id === "openai" ? "#10b981" : "#6366f1",
-                      borderRadius: "50%",
-                      animation: "spin 1s linear infinite",
-                    }}
-                  />
-                  <p
-                    style={{
-                      marginTop: 12,
-                      fontSize: 13,
-                      color: "#737373",
-                    }}
-                  >
-                    Generating...
-                  </p>
-                  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                </div>
-              ) : error ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 280,
-                    backgroundColor: "#fef2f2",
-                    borderRadius: "0 0 8px 8px",
-                    border: "2px solid #fecaca",
-                    borderTop: "none",
-                    padding: 16,
-                    textAlign: "center",
-                  }}
-                >
-                  <p style={{ color: "#b91c1c", fontSize: 14, margin: 0 }}>
-                    {error}
-                  </p>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleSelect(src)}
-                  style={{
-                    padding: 0,
-                    border: "2px solid #e5e5e5",
-                    borderTop: "none",
-                    borderRadius: "0 0 8px 8px",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    background: "none",
-                    transition: "border-color 0.15s, box-shadow 0.15s",
-                    width: "100%",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor =
-                      id === "openai" ? "#10b981" : "#6366f1";
-                    e.currentTarget.style.boxShadow = `0 4px 12px ${
-                      id === "openai"
-                        ? "rgba(16,185,129,0.25)"
-                        : "rgba(99,102,241,0.25)"
-                    }`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "#e5e5e5";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt={`Generated by ${label}`}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: 280,
-                      objectFit: "cover",
-                    }}
-                  />
-                </button>
-              )}
+                {generating && !hasAnyImage ? "Generating Images..." : "Choose Your Image"}
+              </h2>
+              <p className="text-gray-500 text-sm mt-1">
+                {generating && !hasAnyImage
+                  ? "Please wait while we create designs from both AI models"
+                  : "Select one of the AI-generated images to use as your base"}
+              </p>
             </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              padding: "8px 16px",
-              fontSize: 14,
-              color: "#525252",
-              backgroundColor: "#f5f5f5",
-              border: "1px solid #e5e5e5",
-              borderRadius: 8,
-              cursor: "pointer",
-            }}
-          >
-            Cancel
-          </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Image Grid */}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {images.map(({ id, src, label, model, loading, error }) => (
+              <div key={id} className="flex flex-col">
+                {/* Model Label */}
+                <div
+                  className={`py-2 px-4 rounded-t-xl text-center ${
+                    id === "openai"
+                      ? "bg-green-500"
+                      : "bg-purple-500"
+                  }`}
+                >
+                  <span className="text-sm font-semibold text-white uppercase tracking-wide">
+                    {model || label}
+                  </span>
+                </div>
+
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center h-72 bg-gray-50 rounded-b-xl border-2 border-t-0 border-gray-200">
+                    <div
+                      className={`w-12 h-12 border-4 border-gray-200 rounded-full animate-spin ${
+                        id === "openai" ? "border-t-green-500" : "border-t-purple-500"
+                      }`}
+                    />
+                    <p className="mt-4 text-gray-500 text-sm">Generating...</p>
+                  </div>
+                ) : error ? (
+                  <div className="flex flex-col items-center justify-center h-72 bg-red-50 rounded-b-xl border-2 border-t-0 border-red-200 p-6 text-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                      <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <p className="text-red-600 text-sm">{error}</p>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(src)}
+                    className={`relative overflow-hidden rounded-b-xl border-2 border-t-0 transition-all hover:shadow-xl group ${
+                      id === "openai"
+                        ? "border-green-200 hover:border-green-400"
+                        : "border-purple-200 hover:border-purple-400"
+                    }`}
+                  >
+                    <img
+                      src={src}
+                      alt={`Generated by ${label}`}
+                      className="w-full h-72 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white text-gray-900 px-4 py-2 rounded-lg font-semibold shadow-lg">
+                        Select This Image
+                      </span>
+                    </div>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
