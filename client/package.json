@@ -16,6 +16,7 @@
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
     "next": "^16.1.6",
+    "openai": "^6.17.0",
     "react": "^19.1.0"
   },
   "devDependencies": {

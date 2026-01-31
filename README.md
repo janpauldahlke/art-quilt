@@ -10,4 +10,6 @@ Participants:
 
 ### Projectdescription
 
-- touch commit
+#### miro
+
+- https://miro.com/app/board/uXjVGHqLGMw=/
