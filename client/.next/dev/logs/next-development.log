@@ -1,0 +1,24 @@
+[00:00:05.272] Server  LOG     It looks like you're trying to use TypeScript but do not have the required package(s) installed.
+Installing dependencies
+
+If you are not trying to use TypeScript, please remove the tsconfig.json file from your package root (and any TypeScript files in your app and pages directories).
+
+[00:00:05.273] Server  LOG     
+[00:00:05.273] Server  LOG     Installing devDependencies (pnpm):
+[00:00:05.273] Server  LOG     - @types/react
+[00:00:05.273] Server  LOG     - @types/node
+[00:00:05.273] Server  LOG     
+[00:00:06.087] Server  LOG     
+[00:00:06.090] Server  LOG     
+[00:00:06.090] Server  LOG       We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+[00:00:06.090] Server  LOG       The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+[00:00:06.090] Server  LOG       	- include was updated to add '.next/dev/types/**/*.ts'
+[00:00:06.090] Server  LOG     
+[00:00:06.090] Server  LOG       The following mandatory changes were made to your tsconfig.json:
+
+[00:00:06.090] Server  LOG       	- jsx was set to react-jsx (next.js uses the React automatic runtime)
+[00:00:06.090] Server  LOG     
+[00:00:06.594] Server  LOG     ✓ Ready in 5s
+[00:00:16.376] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:45.058] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

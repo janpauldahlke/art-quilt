@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///Users/jandahlke/dev/cursor_hackathon/client/src/app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <main>\n      <h1>Hello Ulla</h1>\n    </main>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACtB,qBACE,6WAAC;kBACC,cAAA,6WAAC;sBAAG;;;;;;;;;;;AAGV"}}]
+}
