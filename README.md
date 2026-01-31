@@ -13,3 +13,11 @@ Participants:
 #### miro
 
 - https://miro.com/app/board/uXjVGHqLGMw=/
+
+#### accessible routes:
+
+- http://localhost:3000/landing
+- http://localhost:3000/result
+- http://localhost:3000/upload
+- http://localhost:3000/imageSelection
+- http://localhost:3000/designcreation
