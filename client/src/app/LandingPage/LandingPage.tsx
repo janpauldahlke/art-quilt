@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import heroImage from "@/assets/landing/hero-image.png";
 import backgroundImage from "@/assets/landing/background.png";
 
@@ -8,6 +11,19 @@ import backgroundImage from "@/assets/landing/background.png";
  */
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  const handleStartCreating = () => {
+    // Clear any existing image data when starting fresh
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("art-quilt-upload-image");
+      localStorage.removeItem("art-quilt-svg");
+      localStorage.removeItem("art-quilt-design");
+      sessionStorage.removeItem("art-quilt-user-prompt");
+    }
+    router.push("/upload");
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header/Navigation */}
@@ -15,7 +31,7 @@ export default function LandingPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <a href="#" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+              <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
                 ArtQuilt
               </a>
             </div>
@@ -27,18 +43,16 @@ export default function LandingPage() {
                 How It Works
               </a>
               <button
-                disabled
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
-                aria-label="Start creating (coming soon)"
+                onClick={handleStartCreating}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors"
               >
                 Start Creating
               </button>
             </div>
             <div className="md:hidden">
               <button
-                disabled
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Start creating (coming soon)"
+                onClick={handleStartCreating}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors"
               >
                 Start
               </button>
@@ -84,19 +98,14 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  disabled
-                  className="px-8 py-4 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 relative group"
-                  aria-label="Start creating (coming soon)"
+                  onClick={handleStartCreating}
+                  className="px-8 py-4 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-purple-700 hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                 >
                   Start Creating
-                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-md">
-                    Soon
-                  </span>
                 </button>
                 <a
                   href="#how-it-works"
                   className="px-8 py-4 bg-white text-purple-600 text-lg font-semibold rounded-lg border-2 border-purple-600 hover:bg-purple-50 transition-colors text-center shadow-md"
-                  aria-label="Learn more"
                 >
                   Learn More
                 </a>

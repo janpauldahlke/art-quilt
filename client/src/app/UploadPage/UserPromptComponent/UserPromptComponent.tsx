@@ -35,14 +35,10 @@ export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPr
   const clear = useCallback(() => persist(""), [persist]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: "40vw" }}>
+    <div className="flex flex-col gap-3">
       <label
         htmlFor="user-prompt"
-        style={{
-          fontSize: 14,
-          fontWeight: 500,
-          color: disabled ? "#a3a3a3" : "#525252",
-        }}
+        className={`text-sm font-medium ${disabled ? "text-gray-400" : "text-gray-700"}`}
       >
         Your prompt
       </label>
@@ -57,42 +53,32 @@ export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPr
             else sessionStorage.removeItem(STORAGE_KEY);
           }
         }}
-        placeholder={disabled ? "Add prompt before uploading an image" : "Describe what you want to create…"}
-        rows={4}
+        placeholder={disabled ? "Image already selected" : "Describe what you want to create… e.g., 'A sunset over mountains with warm orange and purple colors'"}
+        rows={5}
         disabled={disabled}
-        style={{
-          width: "100%",
-          maxWidth: "40vw",
-          minHeight: "4lh",
-          padding: "12px 14px",
-          fontSize: 14,
-          lineHeight: 1.5,
-          color: disabled ? "#737373" : "#171717",
-          backgroundColor: disabled ? "#f5f5f5" : "#fafafa",
-          border: "1px solid #e5e5e5",
-          borderRadius: 8,
-          resize: "vertical",
-          outline: "none",
-          cursor: disabled ? "not-allowed" : undefined,
-        }}
+        className={`w-full px-4 py-3 text-base rounded-xl border transition-all resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+          disabled
+            ? "bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed"
+            : "bg-white text-gray-900 border-gray-200 hover:border-gray-300"
+        }`}
       />
-      <button
-        type="button"
-        onClick={clear}
-        disabled={!prompt || disabled}
-        style={{
-          alignSelf: "flex-start",
-          padding: "6px 12px",
-          fontSize: 12,
-          color: prompt && !disabled ? "#737373" : "#a3a3a3",
-          backgroundColor: "#f5f5f5",
-          border: "1px solid #e5e5e5",
-          borderRadius: 6,
-          cursor: prompt && !disabled ? "pointer" : "not-allowed",
-        }}
-      >
-        Clear prompt
-      </button>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-gray-400">
+          {prompt.length > 0 ? `${prompt.length} characters` : "Be descriptive for best results"}
+        </p>
+        <button
+          type="button"
+          onClick={clear}
+          disabled={!prompt || disabled}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+            prompt && !disabled
+              ? "text-gray-600 bg-gray-100 hover:bg-gray-200"
+              : "text-gray-400 bg-gray-50 cursor-not-allowed"
+          }`}
+        >
+          Clear
+        </button>
+      </div>
     </div>
   );
 };
