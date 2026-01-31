@@ -1,25 +1,17 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-/** Mock "LLM 1" image as data URL (small SVG). */
-const MOCK_IMAGE_1 =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="%236366f1" width="320" height="240"/><text x="160" y="120" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="system-ui" font-size="24">LLM 1</text></svg>'
-  );
+const PROMPT_STORAGE_KEY = "art-quilt-user-prompt";
 
-/** Mock "LLM 2" image as data URL (small SVG). */
-const MOCK_IMAGE_2 =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect fill="%2310b981" width="320" height="240"/><text x="160" y="120" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="system-ui" font-size="24">LLM 2</text></svg>'
-  );
-
-const MOCK_IMAGES = [
-  { id: "1", src: MOCK_IMAGE_1, label: "Option 1" },
-  { id: "2", src: MOCK_IMAGE_2, label: "Option 2" },
-] as const;
+type GeneratedImage = {
+  id: string;
+  src: string;
+  label: string;
+  model?: string;
+  loading?: boolean;
+  error?: string;
+};
 
 export type ImageSelectionLightboxProps = {
   isOpen: boolean;
@@ -32,6 +24,86 @@ export function ImageSelectionLightbox({
   onClose,
   onSelect,
 }: ImageSelectionLightboxProps) {
+  const [images, setImages] = useState<GeneratedImage[]>([
+    { id: "openai", src: "", label: "OpenAI DALL-E 3", loading: true },
+    { id: "imagen", src: "", label: "Google Imagen 4", loading: true },
+  ]);
+  const [generating, setGenerating] = useState(false);
+
+  // Generate images when lightbox opens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const prompt = sessionStorage.getItem(PROMPT_STORAGE_KEY);
+    if (!prompt) return;
+
+    setGenerating(true);
+    setImages([
+      { id: "openai", src: "", label: "OpenAI DALL-E 3", loading: true },
+      { id: "imagen", src: "", label: "Google Imagen 4", loading: true },
+    ]);
+
+    // Generate from both providers in parallel
+    const generateImage = async (
+      provider: "openai" | "imagen",
+      label: string
+    ): Promise<GeneratedImage> => {
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt, provider }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          return {
+            id: provider,
+            src: "",
+            label,
+            error: data.error || "Failed to generate",
+          };
+        }
+
+        return {
+          id: provider,
+          src: data.image,
+          label,
+          model: data.model,
+        };
+      } catch (err) {
+        return {
+          id: provider,
+          src: "",
+          label,
+          error: err instanceof Error ? err.message : "Network error",
+        };
+      }
+    };
+
+    // Update images as they complete (don't wait for both)
+    generateImage("openai", "OpenAI DALL-E 3").then((result) => {
+      setImages((prev) =>
+        prev.map((img) => (img.id === "openai" ? result : img))
+      );
+    });
+
+    generateImage("imagen", "Google Imagen 4").then((result) => {
+      setImages((prev) =>
+        prev.map((img) => (img.id === "imagen" ? result : img))
+      );
+    });
+
+    // Set generating to false after a reasonable time
+    Promise.all([
+      generateImage("openai", "OpenAI DALL-E 3"),
+      generateImage("imagen", "Google Imagen 4"),
+    ]).then(() => {
+      setGenerating(false);
+    });
+  }, [isOpen]);
+
   const handleSelect = useCallback(
     (base64: string) => {
       onSelect(base64);
@@ -54,6 +126,9 @@ export function ImageSelectionLightbox({
   }, [handleKeyDown]);
 
   if (!isOpen) return null;
+
+  const allDone = images.every((img) => !img.loading);
+  const hasAnyImage = images.some((img) => img.src);
 
   return (
     <div
@@ -79,7 +154,7 @@ export function ImageSelectionLightbox({
           backgroundColor: "#fff",
           borderRadius: 12,
           padding: 24,
-          maxWidth: 720,
+          maxWidth: 800,
           width: "100%",
           boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
         }}
@@ -94,7 +169,9 @@ export function ImageSelectionLightbox({
             color: "#171717",
           }}
         >
-          Choose an image
+          {generating && !hasAnyImage
+            ? "Generating images..."
+            : "Choose an image"}
         </h2>
         <p
           style={{
@@ -103,7 +180,9 @@ export function ImageSelectionLightbox({
             color: "#525252",
           }}
         >
-          Select one of the generated images to use as your design base.
+          {generating && !hasAnyImage
+            ? "Please wait while we generate quilt-suitable designs from both AI models."
+            : "Select one of the generated images to use as your design base. Each is from a different AI model."}
         </p>
         <div
           style={{
@@ -113,37 +192,130 @@ export function ImageSelectionLightbox({
             marginBottom: 24,
           }}
         >
-          {MOCK_IMAGES.map(({ id, src, label }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => handleSelect(src)}
-              style={{
-                padding: 0,
-                border: "2px solid #e5e5e5",
-                borderRadius: 8,
-                overflow: "hidden",
-                cursor: "pointer",
-                background: "none",
-                transition: "border-color 0.15s, box-shadow 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#6366f1";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(99,102,241,0.25)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#e5e5e5";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <img
-                src={src}
-                alt={label}
-                width={320}
-                height={240}
-                style={{ display: "block", width: "100%", height: "auto" }}
-              />
-            </button>
+          {images.map(({ id, src, label, model, loading, error }) => (
+            <div key={id} style={{ display: "flex", flexDirection: "column" }}>
+              {/* Model Label */}
+              <div
+                style={{
+                  marginBottom: 8,
+                  padding: "6px 12px",
+                  backgroundColor:
+                    id === "openai" ? "#10b981" : "#6366f1",
+                  borderRadius: "6px 6px 0 0",
+                  textAlign: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#fff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {model || label}
+                </span>
+              </div>
+
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 280,
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: "0 0 8px 8px",
+                    border: "2px solid #e5e5e5",
+                    borderTop: "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      border: "3px solid #e5e5e5",
+                      borderTopColor:
+                        id === "openai" ? "#10b981" : "#6366f1",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                  <p
+                    style={{
+                      marginTop: 12,
+                      fontSize: 13,
+                      color: "#737373",
+                    }}
+                  >
+                    Generating...
+                  </p>
+                  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+              ) : error ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 280,
+                    backgroundColor: "#fef2f2",
+                    borderRadius: "0 0 8px 8px",
+                    border: "2px solid #fecaca",
+                    borderTop: "none",
+                    padding: 16,
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ color: "#b91c1c", fontSize: 14, margin: 0 }}>
+                    {error}
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleSelect(src)}
+                  style={{
+                    padding: 0,
+                    border: "2px solid #e5e5e5",
+                    borderTop: "none",
+                    borderRadius: "0 0 8px 8px",
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    background: "none",
+                    transition: "border-color 0.15s, box-shadow 0.15s",
+                    width: "100%",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor =
+                      id === "openai" ? "#10b981" : "#6366f1";
+                    e.currentTarget.style.boxShadow = `0 4px 12px ${
+                      id === "openai"
+                        ? "rgba(16,185,129,0.25)"
+                        : "rgba(99,102,241,0.25)"
+                    }`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "#e5e5e5";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt={`Generated by ${label}`}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: 280,
+                      objectFit: "cover",
+                    }}
+                  />
+                </button>
+              )}
+            </div>
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
