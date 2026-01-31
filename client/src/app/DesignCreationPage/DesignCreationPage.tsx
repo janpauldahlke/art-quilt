@@ -6,3 +6,11 @@
  * design component here we display the svg
  * * prove some interaction and svg and couple it to the formGroup
  */
+
+export default function DesignCreationPage() {
+  return (
+    <section>
+      <h1>This is Design Creation Page</h1>
+    </section>
+  );
+}

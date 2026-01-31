@@ -7,3 +7,11 @@
  * add button the clear propmt,
  * we do not save chat history somewhere each is prompt is alone for now
  */
+
+export default function UploadPage() {
+  return (
+    <section>
+      <h1>This is Upload Page</h1>
+    </section>
+  );
+}
