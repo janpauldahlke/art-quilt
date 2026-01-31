@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Art Quilt Client",
-  description: "Hello World",
+  title: "ArtQuilt - Turn Images Into Quilt Designs",
+  description:
+    "Transform your photos or AI-generated images into beautiful, quilt-ready designs. Create printable patterns with color maps and fabric requirements for quilters and textile artists of all skill levels.",
 };
 
 export default function RootLayout({
