@@ -4,25 +4,22 @@ an mvp fopr the cursor hacathon happening on 31.01.-01.02.2026 at bucenius law s
 
 Participants:
 
+- Ulla
 - Jan
 - Roman
-- Ulla
+
+#### project link online
+
+https://art-quilt.vercel.app
 
 ### Projectdescription
 
+A web app that transforms photos into simplified SVG designs for art quilts. Upload an image, generate AI-powered designs, and export patterns ready for quilting.
+
 #### miro
 
-- https://miro.com/app/board/uXjVGHqLGMw=/
+- https://miro.com/app/board/uXjVGH7AsX4=/
 
-#### accessible routes:
+#### advertisement in video format
 
-- http://localhost:3000/landing
-- http://localhost:3000/result
-- http://localhost:3000/upload
-- http://localhost:3000/imageSelection
-- http://localhost:3000/designcreation
-
-#### issues
-
-- i had to provide my own API key for gemini, could not claim anyhting, so i gonna disable this key on 02.02.2026 ()
-- touchcommit (vercel main not updating, why do we see an old commit and not the latest one?)
+- https://www.youtube.com/watch?v=_eGxHf4hGyk
