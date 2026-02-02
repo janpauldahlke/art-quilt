@@ -99,8 +99,6 @@ export default function ResultPage() {
     );
   }
 
-  const svgDataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
-
   // Count pieces by color
   const colorCounts: Record<string, number> = {};
   for (const shape of design.shapes) {
@@ -152,12 +150,10 @@ export default function ResultPage() {
           {/* Main Preview */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <div className="bg-gray-50 rounded-xl p-6 flex justify-center border border-gray-100">
-                <img
-                  src={svgDataUrl}
-                  alt="Quilt pattern"
-                  className="max-w-full h-auto"
-                  style={{ imageRendering: "pixelated" }}
+              <div className="bg-gray-50 rounded-xl p-6 flex justify-center border border-gray-100 overflow-hidden">
+                <div 
+                  className="max-w-full [&>svg]:max-w-full [&>svg]:h-auto [&>svg_path]:transition-opacity [&>svg_path:hover]:opacity-80 [&>svg_path:hover]:cursor-pointer [&>svg_rect:hover]:opacity-80 [&>svg_rect:hover]:cursor-pointer"
+                  dangerouslySetInnerHTML={{ __html: svg }}
                 />
               </div>
             </div>

@@ -38,8 +38,6 @@ export const ResultDisplayComponent = ({
     URL.revokeObjectURL(url);
   }, [design]);
 
-  const svgDataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
-
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 flex flex-col gap-5">
       {/* Header */}
@@ -66,13 +64,13 @@ export const ResultDisplayComponent = ({
         )}
       </div>
 
-      {/* SVG Preview */}
-      <div className="bg-gray-50 rounded-xl p-4 flex justify-center border border-gray-100">
-        <img
-          src={svgDataUrl}
-          alt="Quilt pattern preview"
-          className="max-w-full h-auto max-h-[400px]"
-          style={{ imageRendering: "pixelated" }}
+      {/* SVG Preview - Rendered directly for future interactivity */}
+      <div 
+        className="bg-gray-50 rounded-xl p-4 flex justify-center border border-gray-100 overflow-hidden"
+      >
+        <div 
+          className="max-w-full max-h-[400px] [&>svg]:max-w-full [&>svg]:max-h-[400px] [&>svg]:w-auto [&>svg]:h-auto [&>svg_path]:transition-opacity [&>svg_path:hover]:opacity-80 [&>svg_rect:hover]:opacity-80"
+          dangerouslySetInnerHTML={{ __html: svg }}
         />
       </div>
 
