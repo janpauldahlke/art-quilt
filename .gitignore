@@ -3,3 +3,4 @@ client/node_modules
 client/.next
 client/*.tsbuildinfo
 .env
+.pnpm-store

@@ -23,3 +23,5 @@ A web app that transforms photos into simplified SVG designs for art quilts. Upl
 #### advertisement in video format
 
 - https://www.youtube.com/watch?v=_eGxHf4hGyk
+
+*
