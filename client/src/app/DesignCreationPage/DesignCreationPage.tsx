@@ -56,6 +56,7 @@ export default function DesignCreationPage() {
         shapeType: settings.style,
         cellSizeMm: 25,
         seamAllowanceMm: 6.35,
+        voronoiSettings: settings.voronoi,
       });
 
       setResult(result);

@@ -1,0 +1,17 @@
+
+> art quilt client@1.0.0 dev /Users/jandahlke/dev/cursor_hackathon/client
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.178.65:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 460ms
+○ Compiling / ...
+Image with src "/_next/static/media/background.5f7871c2.png" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+Image with src "/_next/static/media/hero-image.c4ee8fbe.png" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 2.3s (compile: 2.2s, render: 121ms)
