@@ -105,10 +105,10 @@ jobs:
         # - Best practices (e.g., React hooks rules)
         # - Next.js specific rules (e.g., proper Link usage, Image optimization)
         # If linting fails, CI fails - prevents bad code from being merged
-        continue-on-error: true
-        # 'continue-on-error' - Temporarily set to true while fixing linting errors
-        # TODO: Set back to false after fixing all 35 linting errors
+        continue-on-error: false
+        # 'continue-on-error' - If true, job continues even if this step fails
         # false = Fail the entire CI if linting fails (strict mode)
+
       
       - name: Build application
         # Compiles TypeScript, bundles code, optimizes assets

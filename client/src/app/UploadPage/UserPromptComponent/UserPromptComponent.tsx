@@ -10,16 +10,17 @@ type UserPromptComponentProps = {
 };
 
 export const UserPromptComponent = ({ disabled = false, onPromptChange }: UserPromptComponentProps) => {
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    return stored || "";
+  });
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setPrompt(stored);
-      onPromptChange?.(!!stored.trim());
+    if (prompt) {
+      onPromptChange?.(!!prompt.trim());
     }
-  }, [onPromptChange]);
+  }, [prompt, onPromptChange]);
 
   const persist = useCallback(
     (value: string) => {

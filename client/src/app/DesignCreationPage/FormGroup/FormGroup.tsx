@@ -88,8 +88,8 @@ export const FormGroup = ({
 
       {/* Style Selection */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Pattern Style</label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="text-sm font-medium text-gray-700" id="pattern-style-label">Pattern Style</div>
+        <div className="grid grid-cols-2 gap-2" role="group" aria-labelledby="pattern-style-label">
           {styles.map(({ value, label, available, icon }) => (
             <button
               key={value}
@@ -115,12 +115,13 @@ export const FormGroup = ({
       {/* Color Count Slider */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium text-gray-700">Colors</label>
+          <label htmlFor="color-count-slider" className="text-sm font-medium text-gray-700">Colors</label>
           <span className="text-sm font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
             {settings.colorCount}
           </span>
         </div>
         <input
+          id="color-count-slider"
           type="range"
           min={2}
           max={10}
@@ -139,12 +140,13 @@ export const FormGroup = ({
       {!isVoronoi && (
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-gray-700">Grid Size</label>
+            <label htmlFor="grid-size-slider" className="text-sm font-medium text-gray-700">Grid Size</label>
             <span className="text-sm font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
               {settings.granularity}×{settings.granularity}
             </span>
           </div>
           <input
+            id="grid-size-slider"
             type="range"
             min={10}
             max={80}
@@ -166,12 +168,13 @@ export const FormGroup = ({
           {/* Number of Cells */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-gray-700">Cell Count</label>
+              <label htmlFor="cell-count-slider" className="text-sm font-medium text-gray-700">Cell Count</label>
               <span className="text-sm font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
                 {settings.voronoi.numSeeds}
               </span>
             </div>
             <input
+              id="cell-count-slider"
               type="range"
               min={20}
               max={500}
@@ -192,7 +195,7 @@ export const FormGroup = ({
           {/* Relaxation Iterations */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-gray-700">Cell Regularity</label>
+              <label htmlFor="cell-regularity-slider" className="text-sm font-medium text-gray-700">Cell Regularity</label>
               <span className="text-sm font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
                 {settings.voronoi.relaxationIterations === 0 
                   ? "Random" 
@@ -204,6 +207,7 @@ export const FormGroup = ({
               </span>
             </div>
             <input
+              id="cell-regularity-slider"
               type="range"
               min={0}
               max={10}
@@ -224,12 +228,15 @@ export const FormGroup = ({
           {/* Edge Weighting Toggle */}
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-sm font-medium text-gray-700">Detail-Aware</label>
+              <label htmlFor="detail-aware-toggle" className="text-sm font-medium text-gray-700">Detail-Aware</label>
               <p className="text-xs text-gray-500">More cells in detailed areas</p>
             </div>
             <button
+              id="detail-aware-toggle"
               type="button"
               onClick={() => handleVoronoiChange("edgeWeighted", !settings.voronoi.edgeWeighted)}
+              role="switch"
+              aria-checked={settings.voronoi.edgeWeighted}
               className={`relative w-12 h-6 rounded-full transition-colors ${
                 settings.voronoi.edgeWeighted ? "bg-purple-600" : "bg-gray-300"
               }`}
@@ -245,12 +252,13 @@ export const FormGroup = ({
           {/* Border Width */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-gray-700">Cell Borders</label>
+              <label htmlFor="cell-borders-slider" className="text-sm font-medium text-gray-700">Cell Borders</label>
               <span className="text-sm font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
                 {settings.voronoi.borderWidth === 0 ? "None" : `${settings.voronoi.borderWidth}px`}
               </span>
             </div>
             <input
+              id="cell-borders-slider"
               type="range"
               min={0}
               max={4}

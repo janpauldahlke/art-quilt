@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { PreviewBox } from "./Preview/previewBox";
 import { FormGroup, DEFAULT_SETTINGS, type QuiltSettings } from "./FormGroup/FormGroup";
 import { ResultDisplayComponent } from "./ResultDisplay/ResultDisplayComponent";
@@ -85,9 +86,9 @@ export default function DesignCreationPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+            <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
               ArtQuilt
-            </a>
+            </Link>
             <div className="flex items-center gap-4">
               <span className="hidden sm:inline text-sm text-gray-500">Step 2 of 3</span>
               <div className="flex gap-1">
@@ -161,7 +162,7 @@ export default function DesignCreationPage() {
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Generate</h3>
                   <p className="text-gray-500 text-center max-w-sm">
-                    Adjust the settings on the right and click "Generate Quilt Pattern" to create your design
+                    Adjust the settings on the right and click &quot;Generate Quilt Pattern&quot; to create your design
                   </p>
                 </div>
               )}

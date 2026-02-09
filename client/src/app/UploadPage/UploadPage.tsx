@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, startTransition } from "react";
+import Link from "next/link";
 import { ImageSelectionLightbox } from "@/app/ImageSelectionPage/ImageSelectionLightbox";
 import { UploadComponent } from "./UploadComponent/UploadComponent";
 import { UPLOAD_IMAGE_STORAGE_KEY } from "./UploadComponent/UploadComponent";
@@ -24,7 +25,9 @@ export default function UploadPage() {
       localStorage.removeItem("art-quilt-svg");
       localStorage.removeItem("art-quilt-design");
       sessionStorage.removeItem("art-quilt-fresh-start");
-      setUploadKey((k) => k + 1);
+      startTransition(() => {
+        setUploadKey((k) => k + 1);
+      });
     }
   }, []);
 
@@ -52,9 +55,9 @@ export default function UploadPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+            <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
               ArtQuilt
-            </a>
+            </Link>
             <div className="flex items-center gap-4">
               <span className="hidden sm:inline text-sm text-gray-500">Step 1 of 3</span>
               <div className="flex gap-1">

@@ -780,11 +780,6 @@ function generateVoronoiSeeds(
   return allSeeds;
 }
 
-// Keep backward compatibility with old function signature
-function computeEdgeMagnitude(imageData: ImageData): Float32Array {
-  return computeEdgeData(imageData).magnitude;
-}
-
 /**
  * Lloyd's relaxation: move seeds to centroids of their cells
  */
@@ -997,9 +992,7 @@ function delaunayTriangulation(points: Point[], width: number, height: number): 
  */
 function computeVoronoiFromDelaunay(
   seeds: Point[],
-  triangles: Triangle[],
-  width: number,
-  height: number
+  triangles: Triangle[]
 ): Point[][] {
   const cells: Point[][] = seeds.map(() => []);
   
@@ -1222,7 +1215,7 @@ function computeVoronoiCells(
   const triangles = delaunayTriangulation(seeds, width, height);
   
   // Derive Voronoi cells from Delaunay
-  const rawCells = computeVoronoiFromDelaunay(seeds, triangles, width, height);
+  const rawCells = computeVoronoiFromDelaunay(seeds, triangles);
   
   // Clip cells to image bounds and compute colors
   const cells: VoronoiCell[] = [];

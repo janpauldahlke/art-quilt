@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UPLOAD_IMAGE_STORAGE_KEY } from "@/app/UploadPage/UploadComponent/UploadComponent";
 
 export const PreviewBox = () => {
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = localStorage.getItem(UPLOAD_IMAGE_STORAGE_KEY);
-    setImageBase64(stored);
-  }, []);
+  const [imageBase64] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(UPLOAD_IMAGE_STORAGE_KEY);
+  });
 
   if (!imageBase64) {
     return (
@@ -36,7 +33,7 @@ export const PreviewBox = () => {
       <div className="rounded-xl overflow-hidden border border-gray-100">
         <img
           src={imageBase64}
-          alt="Base image for quilt design"
+          alt="Uploaded artwork for quilt design"
           className="w-full h-auto object-cover"
         />
       </div>

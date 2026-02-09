@@ -56,15 +56,15 @@ type UploadComponentProps = {
 };
 
 export const UploadComponent = ({ onImageChange }: UploadComponentProps) => {
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(STORAGE_KEY);
+  });
   const [storageError, setStorageError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) setImageBase64(stored);
-    onImageChange?.(!!stored);
-  }, [onImageChange]);
+    onImageChange?.(!!imageBase64);
+  }, [imageBase64, onImageChange]);
 
   const persist = useCallback(
     (base64: string | null) => {

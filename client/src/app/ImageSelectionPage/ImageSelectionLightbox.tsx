@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, startTransition } from "react";
 
 const PROMPT_STORAGE_KEY = "art-quilt-user-prompt";
 
@@ -37,11 +37,13 @@ export function ImageSelectionLightbox({
     const prompt = sessionStorage.getItem(PROMPT_STORAGE_KEY);
     if (!prompt) return;
 
-    setGenerating(true);
-    setImages([
-      { id: "openai", src: "", label: "OpenAI DALL-E 3", loading: true },
-      { id: "imagen", src: "", label: "Google Imagen 4", loading: true },
-    ]);
+    startTransition(() => {
+      setGenerating(true);
+      setImages([
+        { id: "openai", src: "", label: "OpenAI DALL-E 3", loading: true },
+        { id: "imagen", src: "", label: "Google Imagen 4", loading: true },
+      ]);
+    });
 
     // Generate from both providers in parallel
     const generateImage = async (
@@ -131,17 +133,17 @@ export function ImageSelectionLightbox({
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="lightbox-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      role="presentation"
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lightbox-title"
         className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-auto"
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 lg:p-8">
           {/* Header */}
