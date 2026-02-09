@@ -95,8 +95,10 @@ jobs:
       
       - name: Run linter
         # Checks code style and catches common errors
-        run: pnpm lint
+        run: pnpm run lint
         # Runs ESLint (configured in Next.js by default)
+        # 'pnpm run lint' executes the 'lint' script from package.json which runs 'next lint .'
+        # The '.' explicitly tells next lint to use the current directory, avoiding the 'lint' directory error
         # ESLint checks for:
         # - Code style violations (e.g., unused variables, missing semicolons)
         # - Potential bugs (e.g., undefined variables, unreachable code)
