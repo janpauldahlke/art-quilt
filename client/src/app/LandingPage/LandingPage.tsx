@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import heroImage from "@/assets/landing/hero-image.png";
 import backgroundImage from "@/assets/landing/background.png";
@@ -31,9 +32,9 @@ export default function LandingPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+              <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
                 ArtQuilt
-              </a>
+              </Link>
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
@@ -365,7 +366,7 @@ export default function LandingPage() {
             Made for Every Quilter
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Whether you're a hobby quilter exploring new techniques, a beginner
+            Whether you&apos;re a hobby quilter exploring new techniques, a beginner
             looking for guidance, or an experienced maker seeking faster design
             workflows, ArtQuilt adapts to your needs and skill level.
           </p>

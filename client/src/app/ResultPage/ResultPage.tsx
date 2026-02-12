@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { QuiltDesign } from "@/app/util/imageProcessing";
 import {
   QUILT_DESIGN_STORAGE_KEY,
@@ -10,24 +11,22 @@ import {
 
 export default function ResultPage() {
   const router = useRouter();
-  const [design, setDesign] = useState<QuiltDesign | null>(null);
-  const [svg, setSvg] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const savedSvg = localStorage.getItem(QUILT_SVG_STORAGE_KEY);
+  const [design] = useState<QuiltDesign | null>(() => {
+    if (typeof window === "undefined") return null;
     const savedDesign = localStorage.getItem(QUILT_DESIGN_STORAGE_KEY);
-
-    if (savedSvg) setSvg(savedSvg);
     if (savedDesign) {
       try {
-        setDesign(JSON.parse(savedDesign));
+        return JSON.parse(savedDesign);
       } catch {
-        // Ignore parse errors
+        return null;
       }
     }
-  }, []);
+    return null;
+  });
+  const [svg] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(QUILT_SVG_STORAGE_KEY);
+  });
 
   const handleDownloadSvg = useCallback(() => {
     if (!svg) return;
@@ -71,9 +70,9 @@ export default function ResultPage() {
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
-              <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+              <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
                 ArtQuilt
-              </a>
+              </Link>
             </div>
           </nav>
         </header>
@@ -111,9 +110,9 @@ export default function ResultPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <a href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+            <Link href="/" className="text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
               ArtQuilt
-            </a>
+            </Link>
             <div className="flex items-center gap-4">
               <span className="hidden sm:inline text-sm text-gray-500">Step 3 of 3</span>
               <div className="flex gap-1">
@@ -231,7 +230,7 @@ export default function ResultPage() {
                 <div className="flex justify-between">
                   <span className="text-green-700">Piece Size</span>
                   <span className="font-semibold">
-                    {design.fabricData.cellSizeMm}mm ({(design.fabricData.cellSizeMm / 25.4).toFixed(1)}")
+                    {design.fabricData.cellSizeMm}mm ({(design.fabricData.cellSizeMm / 25.4).toFixed(1)}&quot;)
                   </span>
                 </div>
                 <div className="flex justify-between">

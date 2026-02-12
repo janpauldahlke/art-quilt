@@ -1,6 +1,8 @@
 .cursorrules
+node_modules
 client/node_modules
 client/.next
 client/*.tsbuildinfo
 .env
+.env.*
 .pnpm-store

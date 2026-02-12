@@ -44,7 +44,18 @@ export default function FlowerSvg({ svgContent }: { svgContent: string }) {
   }, []);
 
   return (
-    <div className="inline-block" onClick={handleClick}>
+    <div 
+      className="inline-block" 
+      onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       <div
         className="cursor-crosshair [&_svg]:max-h-[400px] [&_svg]:w-auto"
         dangerouslySetInnerHTML={{ __html: svgContent }}

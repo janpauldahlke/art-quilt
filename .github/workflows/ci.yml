@@ -1,0 +1,124 @@
+# GitHub Actions workflow file
+# This file defines automated tasks that run when code is pushed or pull requests are created
+# Location: .github/workflows/ci.yml (GitHub automatically looks for workflows in this directory)
+
+name: CI Pipeline
+# 'name' - This is the display name shown in GitHub Actions tab
+# You'll see "CI Pipeline" when viewing workflow runs
+
+on:
+  # 'on' - Defines when this workflow should trigger
+  push:
+    # 'push' - Runs when code is pushed to the repository
+    branches:
+      - main
+      - infra
+      # Runs when pushing to 'main' or 'infra' branches
+      # 'infra' added temporarily for testing CI pipeline
+      # This prevents running CI on every feature branch push (saves CI minutes)
+  
+  pull_request:
+    # 'pull_request' - Runs when a PR is opened, updated, or synchronized
+    branches:
+      - main
+      - infra
+      # Runs for PRs targeting 'main' or 'infra' branches
+      # This ensures all code merged to main passes CI checks
+
+jobs:
+  # 'jobs' - A workflow can have multiple jobs that run in parallel or sequence
+  # Each job runs on a separate virtual machine
+  
+  ci:
+    # 'ci' - Job name (you can have multiple jobs like 'test', 'build', 'deploy')
+    
+    runs-on: ubuntu-latest
+    # 'runs-on' - Specifies the operating system for the virtual machine
+    # ubuntu-latest = Latest Ubuntu Linux (free tier, fast, widely used)
+    # Other options: windows-latest, macos-latest (costs more CI minutes)
+    
+    defaults:
+      run:
+        working-directory: ./client
+        # 'working-directory' - All 'run' steps will execute in ./client directory
+        # This is where your package.json is located
+        # Without this, you'd need to 'cd client' in every step
+    
+    steps:
+      # 'steps' - Sequential list of commands to execute
+      # Each step runs one after another, and if any step fails, the job fails
+      
+      - name: Checkout code
+        # 'name' - Human-readable description shown in GitHub Actions UI
+        uses: actions/checkout@v4
+        # 'uses' - Reuses a pre-built action from GitHub Actions marketplace
+        # actions/checkout@v4 - Downloads your repository code to the VM
+        # Without this, the VM would be empty - no access to your code!
+        # @v4 = version 4 (pinned for stability, won't break if v5 changes)
+      
+      - name: Setup pnpm
+        # Sets up pnpm package manager (faster than npm, uses pnpm-lock.yaml)
+        uses: pnpm/action-setup@v4
+        # Official pnpm action maintained by the pnpm team
+        with:
+          # 'with' - Passes parameters to the action
+          version: 10
+          # Uses pnpm version 10 (matches your packageManager field in package.json)
+          # This ensures CI uses the same pnpm version as your local development
+      
+      - name: Setup Node.js
+        # Sets up Node.js runtime environment
+        uses: actions/setup-node@v4
+        # Official Node.js action from GitHub
+        with:
+          node-version: '20'
+          # Uses Node.js version 20 (LTS - Long Term Support)
+          # Matches the version you're likely using locally
+          cache: 'pnpm'
+          # 'cache' - Caches pnpm's store directory between runs
+          # Speeds up 'pnpm install' by reusing downloaded packages
+          # First run: downloads everything
+          # Subsequent runs: only downloads new/changed packages (much faster!)
+          cache-dependency-path: './client/pnpm-lock.yaml'
+          # Tells GitHub where to find the lock file
+          # When lock file changes, cache is invalidated (ensures fresh install)
+      
+      - name: Install dependencies
+        # Installs all packages listed in package.json
+        run: pnpm install --frozen-lockfile
+        # 'run' - Executes a shell command
+        # pnpm install - Reads package.json and installs dependencies
+        # --frozen-lockfile - Prevents pnpm from updating pnpm-lock.yaml
+        # This ensures CI installs EXACTLY the same versions as your lock file
+        # Without this flag, pnpm might update versions and cause inconsistencies
+        # If lock file is out of sync, this step will FAIL (which is good - catches errors early)
+      
+      - name: Run linter
+        # Checks code style and catches common errors
+        run: pnpm run lint
+        # Runs ESLint directly (Next.js 16 removed 'next lint' command)
+        # 'pnpm run lint' executes the 'lint' script from package.json which runs 'eslint .'
+        # ESLint configuration is in eslint.config.mjs (flat config format for ESLint 9+)
+        # ESLint checks for:
+        # - Code style violations (e.g., unused variables, missing semicolons)
+        # - Potential bugs (e.g., undefined variables, unreachable code)
+        # - Best practices (e.g., React hooks rules)
+        # - Next.js specific rules (e.g., proper Link usage, Image optimization)
+        # If linting fails, CI fails - prevents bad code from being merged
+        continue-on-error: false
+        # 'continue-on-error' - If true, job continues even if this step fails
+        # false = Fail the entire CI if linting fails (strict mode)
+
+      
+      - name: Build application
+        # Compiles TypeScript, bundles code, optimizes assets
+        run: pnpm build
+        # Runs 'next build' (defined in package.json scripts)
+        # This step:
+        # 1. Type-checks all TypeScript files (catches type errors)
+        # 2. Compiles React components
+        # 3. Optimizes images, CSS, JavaScript
+        # 4. Generates static pages (if any)
+        # 5. Creates production-ready .next folder
+        # If build fails (e.g., TypeScript error, missing import), CI fails
+        # This catches errors BEFORE deploying to production!
